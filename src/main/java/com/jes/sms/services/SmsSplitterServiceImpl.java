@@ -25,6 +25,11 @@ public class SmsSplitterServiceImpl implements SmsSplitterService {
      */
     @Override
     public List<String> splitMessage(String message) {
+
+        if (message == null || message.trim().isEmpty()) {
+            throw new IllegalArgumentException("Message cannot be empty");
+        }
+
         List<String> words = List.of(message.split(" "));
         List<String> parts = new ArrayList<>();
 
