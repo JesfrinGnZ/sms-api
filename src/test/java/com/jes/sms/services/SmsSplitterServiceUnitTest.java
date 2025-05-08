@@ -56,4 +56,39 @@ class SmsSplitterServiceUnitTest {
         assertTrue(parts.get(0).contains("Part 1 of 1"));
     }
 
+
+    @Test
+    void splitMessageHandlesMessageExactlyAtMaxLength() {
+        String message = "a".repeat(160);
+        List<String> parts = smsSplitterService.splitMessage(message);
+
+        assertEquals(2, parts.size());
+    }
+
+    @Test
+    void splitMessageSplitsMessageSlightlyOverLimit() {
+        String message = "a".repeat(161);
+        List<String> parts = smsSplitterService.splitMessage(message);
+
+        assertEquals(2, parts.size());
+        assertTrue(parts.get(0).contains("Part 1 of 2"));
+        assertTrue(parts.get(1).contains("Part 2 of 2"));
+    }
+
+
+    @Test
+    void splitMessageThrowsExceptionForNullMessage() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> smsSplitterService.splitMessage(null));
+        assertEquals("Message cannot be empty", exception.getMessage());
+    }
+
+    @Test
+    void splitMessageHandlesMixedLengthWords() {
+        String message = "Short short " + "x".repeat(170) + " short";
+        List<String> parts = smsSplitterService.splitMessage(message);
+
+        assertTrue(parts.size() >= 2);
+        assertTrue(parts.get(0).contains("Part 1 of"));
+    }
+
 }
